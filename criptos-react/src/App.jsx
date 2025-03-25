@@ -1,7 +1,12 @@
 import { useState, useEffect } from 'react'
-import styled from '@emotion/styled'
+// importar el styled para los componentes
+import styled from '@emotion/styled'  
 import ImagenCripto from './img/imagen-criptos.png'
 import Formulario from './components/Formulario'
+import Resultado from './components/Resultado'
+import Spinner from './components/Spinner'
+
+//Styled Component
 
 const Contenedor = styled.div`
   max-width: 900px;
@@ -42,15 +47,24 @@ const Heading = styled.h1`
 function App() {
 
   const [monedas, setMonedas] = useState({})
+  //Para almacenar el resultado de la consulta a la API
+  const [resultado, setResultado] = useState({})
+  const [cargando, setCargando] = useState(false)
+
+  //Consume la API pero para poder hacer la cotización 
 
   useEffect(()=>{
     if (Object.keys(monedas).length>0) {
       const cotizarCripto = async()=>{
+        setCargando(true)
+        setResultado({})
         const {moneda, criptomoneda} = monedas 
         const url = `https://min-api.cryptocompare.com/data/pricemultifull?fsyms=${criptomoneda}&tsyms=${moneda},EUR`
         const respuesta = await fetch(url)
         const resultado= await respuesta.json()
-        console.log(resultado)
+        setResultado(resultado.DISPLAY[criptomoneda][moneda])
+
+        setCargando(false)
       }
       cotizarCripto()
     }
@@ -58,6 +72,7 @@ function App() {
 
   return (
     <Contenedor>
+      {/* Styled Component */}
       <Imagen
         src={ImagenCripto}
         alt="Imagenes Criptomonedas"
@@ -67,6 +82,8 @@ function App() {
         <Formulario
           setMonedas={setMonedas}
         />
+        {cargando && <Spinner/>}
+        {resultado.PRICE && <Resultado resultado={resultado}/>}
       </div>
         
     </Contenedor>

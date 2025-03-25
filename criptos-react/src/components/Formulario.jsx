@@ -26,6 +26,7 @@ const InputSubmit = styled.input`
 
 const Formulario = ({setMonedas}) => {
 
+    //Aqui utiliza el HOOK personalizado
     const [criptos, setCriptos] = useState([])
     const [error, setError] = useState(false)
 
